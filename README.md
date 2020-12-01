@@ -2,6 +2,8 @@
 
 https://github.com/david0455/comp472-a3
 
+(REMOVE THIS LINK WHEN PROJECT IS DONE) https://docs.google.com/presentation/d/12inHSL3EmV-UGskjKY7FAed-H73TYlccWQ9_rj284gA/edit?usp=sharing
+
 ## Team Members
 
 Team name: ChickenNuggets

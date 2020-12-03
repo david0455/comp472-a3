@@ -23,7 +23,7 @@
 
 ############## NOTE 2 ###################################
 
-# the tain_set should be formatted as follows:
+# the train_set should be formatted as follows:
 # | tweetID | word1 | word2 | word3| ... | class | 
 # | 0000001 |   2   |   3   |  4   | ... |  yes  |
 
@@ -47,14 +47,13 @@ class NB_Classifier:
 
     def nb_fit(self, train_set):
         self.train_set = train_set 
-        num_tweet_c = list() # number of instance that are part of that class 
         tot_num_tweets = train_set.length()  # total number of instance/tweets
 
         # TODO: GET all column names (i.e. vocabulary) from dataframe train_set into array
         self.vocabulary = self.train_set.getColumnName()
 
         for h in self.priors:
-            num_tweet_c = (train_set.freq(h))
+            num_tweet_c = train_set.freq(h)
             self.priors[h] = log10(num_tweet_c/tot_num_tweets)
 
             #TODO: add smooting

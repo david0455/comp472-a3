@@ -55,7 +55,7 @@ class NB_Classifier:
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
-        self.vocabulary
+
         for h in self.priors:
             num_tweet_c = (train_set['q1_label'] == h).sum()
             self.priors[h] = log10(num_tweet_c/tot_num_tweets)
@@ -84,8 +84,8 @@ class NB_Classifier:
                             score = score * self.likelihood_h0[voc]
                         elif h == "no":
                             score = score * self.likelihood_h1[voc]
-                        else:
-                            score = 0
+                    else:
+                        score = 0
                 self.score[h] = score
             result_class = max(self.score.items(), key=op.itemgetter(1))[0]
             self.final_result.append(result_class)

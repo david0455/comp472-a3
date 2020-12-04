@@ -32,7 +32,7 @@ import operator as op
 from math import log10
 from NB_BOW_OV import toDataFrame, feqTotalTweets, freq
 
-smoothing = 0.1 
+smoothing = 0.01 
 
 class NB_Classifier:
 
@@ -54,7 +54,6 @@ class NB_Classifier:
     def fit(self, train_set):
         tot_num_tweets = train_set.size  # total number of instance/tweets
 
-        # TODO: GET all column names (i.e. vocabulary) from dataframe train_set into array
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
 
@@ -66,32 +65,11 @@ class NB_Classifier:
             for f in self.vocabulary:
                 word, count = f
                 if h == "yes":
-                    self.likelihood_h0[word] = log10(count/num_tweet_c) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h0[word] = log10((count + smoothing)/(num_tweet_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
                 elif h == "no":
-                    self.likelihood_h1[word] = log10(count/num_tweet_c) # likelihood[0,0] = [class, word, probability]
-
+                    self.likelihood_h1[word] = log10((count + smoothing)/(num_tweet_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
 
     def predict(self, test_set):
-        for h in self.priors:
-            score = self.priors[h]
-            for f in test_set.to_numpy(): #numpy array of all instances
-                _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
-                headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets
-                for word in headers: 
-                    voc, _count = word 
-                    if voc in self.vocabulary: # if the voc is in the list of the training vocabulary
-                        if h == "yes":
-                            score = score * self.likelihood_h0[voc]
-                        elif h == "no":
-                            score = score * self.likelihood_h1[voc]
-                self.score[h] = score
-            result_class = max(self.score.items(), key=op.itemgetter(1))[0]
-            self.final_result.append(result_class)
-
-        test_set["result_class"] = self.final_result
-        print(test_set)
-
-    def predict2(self, test_set):
         for f in test_set.to_numpy(): # numpy array of all instances
             _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
             headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets

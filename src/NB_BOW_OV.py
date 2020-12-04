@@ -40,14 +40,23 @@ tweet_id = training.iloc[:, 0]
 tweet_text = training.iloc[:, 1]
 q1_label = training.iloc[:, 2]
 
+# xd = training.iloc[:, 0:3]
+# print()
+# print(xd)
+# print(type(xd))
 
-test1 = training.iloc[0:3, 1]
-total_words = feqTotalTweets(test1)
-#print(total_words)
-print()
+# SOME TESTS ----------------------------------------------------------
+# test1 = training.iloc[0:3, 1]
+# total_words = feqTotalTweets(test1)
+# #print(total_words)
+# print()
 
-test_row = training.iloc[0, 1]
-#print(test_row)
-print()
+# test_row = training.iloc[0, 1]
+# #print(test_row)
+# print()
 
-print(toDataFrame(freq(test_row)).T)
+# # DataFrame.T or .transpose() because row -> column
+# #print(toDataFrame(freq(test_row)).T)
+
+# print(freq(test_row))
+# print(type(freq(test_row)))

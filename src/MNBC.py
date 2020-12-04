@@ -75,17 +75,17 @@ class NB_Classifier:
             _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
             headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets
             
-            for word in headers: 
-                voc, _count = word 
-                for h in self.priors:
-                    score = self.priors[h] 
+            for h in self.priors:
+                score = self.priors[h]
+                for word in headers: 
+                    voc, _count = word 
                     if voc in self.vocabulary: # if the voc is in the list of the training vocabulary
                         if h == "yes":
                             score = score * self.likelihood_h0[voc]
                         elif h == "no":
                             score = score * self.likelihood_h1[voc]
                     else:
-                        score = 0
+                        score += 0
                 self.score[h] = score
             result_class = max(self.score.items(), key=op.itemgetter(1))[0]
             self.final_result.append(result_class)

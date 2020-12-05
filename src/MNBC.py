@@ -49,7 +49,27 @@ class NB_Classifier:
         self.likelihood_h0 = {}  # Dictionary of conditional probabilities for h1; see Note 1
         self.likelihood_h1 = {}  # Dictionary 
         self.vocabulary = None
-        
+    
+
+    #TODO: Accuracy
+    def getAccuracy(self, test_set):
+        print("hello")
+
+
+    #TODO: Precision
+    def getPrecision(self, test_set):
+        print("hello")
+    
+
+    #TODO: Recall
+    def getRecall(self, test_set):
+        print("hello")
+    
+
+    #TODO: F1-measure
+    def getF1(self, test_set):
+        print("hello")
+
 
     def fit(self, train_set):
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
@@ -74,16 +94,16 @@ class NB_Classifier:
         for f in test_set.to_numpy(): # numpy array of all instances
             _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
             headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets
-            
+
             for h in self.priors:
                 score = self.priors[h]
                 for word in headers: 
-                    voc, _count = word 
+                    voc, count = word 
                     if voc in self.vocabulary: # if the voc is in the list of the training vocabulary
                         if h == "yes":
-                            score = score * self.likelihood_h0[voc]
+                            score = score * (count*self.likelihood_h0[voc])
                         elif h == "no":
-                            score = score * self.likelihood_h1[voc]
+                            score = score * (count*self.likelihood_h1[voc])
                     else:
                         score += 0
                 self.score[h] = score
@@ -91,22 +111,10 @@ class NB_Classifier:
             self.final_result.append(result_class)
 
         test_set["predicted_class"] = self.final_result
+        self.getAccuracy(test_set)
+        self.getPrecision(test_set)
+        self.getRecall(test_set)
+        self.getF1(test_set)
+
         print(test_set)
-
-
-    #TODO: Accuracy
-    def accuracy(self):
-        print("hello")
-
-    #TODO: Precision
-    def precision(self):
-        print("hello")
-    
-    #TODO: Recall
-    def recall(self):
-        print("hello")
-    
-    #TODO: F1-measure
-    def F1(self):
-        print("hello")
 

@@ -27,8 +27,9 @@
 # | tweetID |  tweet  | class | 
 # | 0000001 |  hello |  yes  |
 
-
+import pandas as pd
 import operator as op
+import numpy as np
 from math import log10
 from NB_BOW_OV import toDataFrame, feqTotalTweets, freq
 
@@ -75,26 +76,31 @@ class NB_Classifier:
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
-
         for h in self.priors:
             num_tweet_c = (train_set['q1_label'] == h).sum()
+            df_c = train_set[(train_set['q1_label'] == h)] # all instances of class h
+            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))
+            tot_num_word_c = num_word_c[0].sum() # total number of words in class h
             self.priors[h] = log10(num_tweet_c/tot_num_tweets)
 
-            #TODO: add smooting
             for f in self.vocabulary:
-                word, count = f
+                word_f, _count = f
+                temp_word = (num_word_c[num_word_c['index'] == word_f])
+                if not temp_word.empty:
+                    _word_c, count_c = temp_word.iloc[0]
+                else:
+                    count_c = 0
                 if h == "yes":
-                    self.likelihood_h0[word] = log10((count + smoothing)/(num_tweet_c + self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
                 elif h == "no":
-                    self.likelihood_h1[word] = log10((count + smoothing)/(num_tweet_c + self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
 
 
     def predict(self, test_set):
-        
+        test_set = pd.DataFrame(test_set)
         for f in test_set.to_numpy(): # numpy array of all instances
             _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
             headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets
-
             for h in self.priors:
                 score = self.priors[h]
                 for word in headers: 
@@ -105,12 +111,17 @@ class NB_Classifier:
                         elif h == "no":
                             score = score * (count*self.likelihood_h1[voc])
                     else:
-                        score += 0
+                        score += 0 # if word is not in vocabulary, ignore it
                 self.score[h] = score
-            result_class = max(self.score.items(), key=op.itemgetter(1))[0]
+            result_class = max(self.score.items(), key=op.itemgetter(1))
             self.final_result.append(result_class)
 
-        test_set["predicted_class"] = self.final_result
+        most_likely_class, final_score = zip(*self.final_result)
+
+        test_set['predicted_class'] = most_likely_class
+        test_set['score'] = np.array(final_score).round(2)
+        # test_set['score'] = test_set['score'].round(decimals=2)
+
         self.getAccuracy(test_set)
         self.getPrecision(test_set)
         self.getRecall(test_set)

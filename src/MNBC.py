@@ -5,8 +5,8 @@
  #  |     "word1"    |     "word2"    | ... |     "word99"    | 
  #  |  P(word1 | h0) |  P(word2 | h0) | ... |  P(word99 | h0) |
 
- # likelihood = {word: probability}
- # e.g. likelihood["apple"] <== ["apple", 0.45]
+ # likelihood = {word, probability}
+ # e.g. likelihood["apple"] <== {"apple": 0.45}
     
 ##########
 
@@ -31,13 +31,13 @@ class NB_Classifier:
             "yes": 0, 
             "no": 0
         } 
-        self.score = {
+        self.score = { # Score of each class when predicting
             "yes": 0,
             "no": 0
         }
         self.final_result = []
         self.likelihood_h0 = {}  # Dictionary of conditional probabilities for h1; see Note 1
-        self.likelihood_h1 = {}  # Dictionary 
+        self.likelihood_h1 = {}  # Dictionary of conditional probabilities for h0
         self.vocabulary = None
     
 
@@ -63,74 +63,90 @@ class NB_Classifier:
 
     def fit_OV(self, train_set):
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
+
+        # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
         all_tweets = train_set.iloc[:, 1]
-        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
+        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy() # vocabulary <-- [word, frequency]
+
         for h in self.priors:
-            num_tweet_c = (train_set['q1_label'] == h).sum()
-            df_c = train_set[(train_set['q1_label'] == h)] # all instances of class h
-            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))
-            tot_num_word_c = num_word_c[0].sum() # total number of words in class h
-            self.priors[h] = log10(num_tweet_c/tot_num_tweets)
+            num_tweet_c = (train_set['q1_label'] == h).sum()            # Number of tweets/instance in class c
+            df_c = train_set[(train_set['q1_label'] == h)]              # All instances of class c
+            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))   # Get all tweets/instances of class c
+            tot_num_word_c = num_word_c[0].sum()                        # Total number of words in class c
+            
+            self.priors[h] = log10(num_tweet_c/tot_num_tweets)          # Calculate the prior P(H) 
 
             for f in self.vocabulary:
                 word_f, _count = f
-                temp_word = (num_word_c[num_word_c['index'] == word_f])
+
+                # Check if class c has the word in vocabulary(BOW)
+                temp_word = (num_word_c[num_word_c['index'] == word_f]) 
                 if not temp_word.empty:
-                    _word_c, count_c = temp_word.iloc[0]
+                    _word_c, count_c = temp_word.iloc[0]    # Get the frequency of the word in class c
                 else:
                     count_c = 0
+                
+                # Calculate conditional probabilities/likelihood for each word in each class
                 if h == "yes":
-                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood h0 <-- {word: probability}
                 elif h == "no":
-                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood h1 <-- {word: probability}
 
 
     # TODO: Need to change method names for NB_BOW_FV
     def fit_FV(self, train_set):
-        tot_num_tweets = train_set.shape[0] # total number of instance/tweets
+         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
+
+        # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
         all_tweets = train_set.iloc[:, 1]
-        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
+        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy() # vocabulary <-- [word, frequency]
+
         for h in self.priors:
-            num_tweet_c = (train_set['q1_label'] == h).sum()
-            df_c = train_set[(train_set['q1_label'] == h)] # all instances of class h
-            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))
-            tot_num_word_c = num_word_c[0].sum() # total number of words in class h
-            self.priors[h] = log10(num_tweet_c/tot_num_tweets)
+            num_tweet_c = (train_set['q1_label'] == h).sum()            # Number of tweets/instance in class c
+            df_c = train_set[(train_set['q1_label'] == h)]              # All instances of class c
+            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))   # Get all tweets/instances of class c
+            tot_num_word_c = num_word_c[0].sum()                        # Total number of words in class c
+            
+            self.priors[h] = log10(num_tweet_c/tot_num_tweets)          # Calculate the prior P(H) 
 
             for f in self.vocabulary:
                 word_f, _count = f
-                temp_word = (num_word_c[num_word_c['index'] == word_f])
-                if not temp_word.empty: # if the word exists in this class
-                    _word_c, count_c = temp_word.iloc[0]  # get frequency of the word in this class 
+
+                # Check if class c has the word in vocabulary(BOW)
+                temp_word = (num_word_c[num_word_c['index'] == word_f]) 
+                if not temp_word.empty:
+                    _word_c, count_c = temp_word.iloc[0]    # Get the frequency of the word in class c
                 else:
                     count_c = 0
+                
+                # Calculate conditional probabilities/likelihood for each word in each class
                 if h == "yes":
-                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood  <-- [word, probability]
+                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood h0 <-- {word: probability}
                 elif h == "no":
-                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood  <-- [word, probability]
+                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood h1 <-- {word: probability}
 
 
     def predict(self, test_set):
-        for f in test_set.to_numpy(): # numpy array of all instances
-            _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
-            headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets
+        for f in test_set.to_numpy():                       # Numpy array of all instances in test_set
+            _tweetID, tweet, _label = f                     # Each instance has columns: tweetID, tweet, label
+            headers = toDataFrame(freq(tweet)).to_numpy()   # Get the list words for each individual tweets
             for h in self.priors:
-                score = self.priors[h]
+                score = self.priors[h]         # Initialize score with prior of the class
                 for word in headers: 
-                    voc, count = word 
-                    if voc in self.vocabulary: # if the voc is in the list of the training vocabulary
+                    voc, count = word          # Get a word from the tweet and its frequency 
+                    if voc in self.vocabulary: # If the word is in the list(BOW) of the vocabulary(from training_set), add to the score
                         if h == "yes":
-                            score = score * (count*self.likelihood_h0[voc])
+                            score = score * (count*self.likelihood_h0[voc]) 
                         elif h == "no":
                             score = score * (count*self.likelihood_h1[voc])
                     else:
-                        score += 0 # if word is not in vocabulary, ignore it
-                self.score[h] = score
-            result_class = max(self.score.items(), key=op.itemgetter(1))
-            self.final_result.append(result_class)
+                        score += 0  # If word is not in vocabulary, ignore it
+                self.score[h] = score                                       # When we looped through all the words in the tweet, store the score to its class 
+            result_class = max(self.score.items(), key=op.itemgetter(1))    # Get the argmax between the score of each class
+            self.final_result.append(result_class)      # Append final result in list
 
+        # Put results in dataframe
         most_likely_class, final_score = zip(*self.final_result)
-
         test_set['predicted_class'] = most_likely_class
         test_set['score'] = np.array(final_score).round(2)
         # test_set['score'] = test_set['score'].round(decimals=2)

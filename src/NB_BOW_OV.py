@@ -18,7 +18,6 @@ def freq(str):
 def freqEachTweet(texts):
     templist = []
     for str in texts:
-        print(type(str))
         templist.append(freq(str))
     return templist
 

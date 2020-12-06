@@ -95,7 +95,7 @@ class NB_Classifier:
 
     # TODO: Need to change method names for NB_BOW_FV
     def fit_FV(self, train_set):
-         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
+        tot_num_tweets = train_set.shape[0] # total number of instance/tweets
 
         # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
         all_tweets = train_set.iloc[:, 1]
@@ -136,9 +136,9 @@ class NB_Classifier:
                     voc, count = word          # Get a word from the tweet and its frequency 
                     if voc in self.vocabulary: # If the word is in the list(BOW) of the vocabulary(from training_set), add to the score
                         if h == "yes":
-                            score = score * (count*self.likelihood_h0[voc]) 
+                            score = score + (count*self.likelihood_h0[voc]) 
                         elif h == "no":
-                            score = score * (count*self.likelihood_h1[voc])
+                            score = score + (count*self.likelihood_h1[voc])
                     else:
                         score += 0  # If word is not in vocabulary, ignore it
                 self.score[h] = score                                       # When we looped through all the words in the tweet, store the score to its class 

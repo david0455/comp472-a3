@@ -10,7 +10,7 @@ def bow_ov():
 
 # Calculates the frequency of each word within a string
 def freq(str):
-    aList = str.split()
+    aList = str.lower().split()
     counter = Counter(aList)
     return counter
 
@@ -18,7 +18,6 @@ def freq(str):
 def freqEachTweet(texts):
     templist = []
     for str in texts:
-        print(type(str))
         templist.append(freq(str))
     return templist
 
@@ -26,7 +25,7 @@ def freqEachTweet(texts):
 def feqTotalTweets(texts):
     temp = ""
     for string in texts:
-        temp += string + " "
+        temp += string.lower() + " "
     return freq(temp)
 
 # Convert type Counter to type DataFrame
@@ -34,29 +33,10 @@ def toDataFrame(counter):
     df = pd.DataFrame.from_dict(counter, orient='index').reset_index()
     return df
 
-
-training = pd.read_csv('./data/covid_training.tsv', sep='\t')
-tweet_id = training.iloc[:, 0]
-tweet_text = training.iloc[:, 1]
-q1_label = training.iloc[:, 2]
-
-# xd = training.iloc[:, 0:3]
-# print()
-# print(xd)
-# print(type(xd))
-
-# SOME TESTS ----------------------------------------------------------
-# test1 = training.iloc[0:3, 1]
-# total_words = feqTotalTweets(test1)
-# #print(total_words)
-# print()
-
-# test_row = training.iloc[0, 1]
-# #print(test_row)
-# print()
-
-# # DataFrame.T or .transpose() because row -> column
-# #print(toDataFrame(freq(test_row)).T)
-
-# print(freq(test_row))
-# print(type(freq(test_row)))
+# Get data from dataset
+def getData(dataset, test):
+    if test:
+        file = pd.read_csv(dataset,  sep='\t', header=None)
+    else:
+        file = pd.read_csv(dataset,  sep='\t')
+    return file.iloc[:, 0:3]

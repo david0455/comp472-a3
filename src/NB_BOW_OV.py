@@ -10,7 +10,7 @@ def bow_ov():
 
 # Calculates the frequency of each word within a string
 def freq(str):
-    aList = str.split()
+    aList = str.lower().split()
     counter = Counter(aList)
     return counter
 
@@ -25,7 +25,7 @@ def freqEachTweet(texts):
 def feqTotalTweets(texts):
     temp = ""
     for string in texts:
-        temp += string + " "
+        temp += string.lower() + " "
     return freq(temp)
 
 # Convert type Counter to type DataFrame

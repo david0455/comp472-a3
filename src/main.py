@@ -8,8 +8,8 @@ def main():
     nb.fit_OV(train_set)
     nb.predict(test_set)
 
-    nb.fit_FV(train_set)
-    nb.predict(test_set)
+    # nb.fit_FV(train_set)
+    # nb.predict(test_set)
 
 if __name__ == '__main__':
     main()

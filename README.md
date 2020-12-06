@@ -16,20 +16,24 @@ Team name: ChickenNuggets
 
 ## Task Division
 
-**David Chen**:
+**David Chen**: 
 
+- Multinomial Naive Bayes Classifier, Analysis
 
 **Jack Leung**:
 
+- NB_BOW_OV, Analysis
 
 **Samiha Rahman**:
+
+- NB_BOW_FV, Analysis
 
 
 ## How to run the code:
 
 **Prerequisites:**
 
-*Python 3.x.x must be installed to run the code*
+*Python 3.8.x must be installed to run the code*
 
 *For more information on how to install Python go to https://www.python.org/downloads/*
 

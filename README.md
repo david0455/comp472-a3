@@ -41,3 +41,8 @@ Team name: ChickenNuggets
 
 **Running the code:**
 
+1. Clone the repo
+
+2. Inside the **/src** folder, run **main.py**
+
+3. **main.py** will execute the Multinomial Naive Bayes Classifier with the two different vocabulary models. Output Files will be created accordingly.

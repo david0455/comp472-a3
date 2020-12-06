@@ -27,7 +27,7 @@ smoothing = 0.01
 class NB_Classifier:
 
     def __init__(self):
-        self.priors = { # Priors probabilities: ["yes": P(H1), "no" : P(H2)]
+        self.priors = { # Priors probabilities: ["yes": P(H0), "no" : P(H1)]
             "yes": 0, 
             "no": 0
         } 

@@ -72,7 +72,31 @@ class NB_Classifier:
         print("hello")
 
 
-    def fit(self, train_set):
+    def fit_OV(self, train_set):
+        tot_num_tweets = train_set.shape[0] # total number of instance/tweets
+        all_tweets = train_set.iloc[:, 1]
+        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
+        for h in self.priors:
+            num_tweet_c = (train_set['q1_label'] == h).sum()
+            df_c = train_set[(train_set['q1_label'] == h)] # all instances of class h
+            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))
+            tot_num_word_c = num_word_c[0].sum() # total number of words in class h
+            self.priors[h] = log10(num_tweet_c/tot_num_tweets)
+
+            for f in self.vocabulary:
+                word_f, _count = f
+                temp_word = (num_word_c[num_word_c['index'] == word_f])
+                if not temp_word.empty:
+                    _word_c, count_c = temp_word.iloc[0]
+                else:
+                    count_c = 0
+                if h == "yes":
+                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                elif h == "no":
+                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+
+
+    def fit_FV(self, train_set):
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()
@@ -97,7 +121,6 @@ class NB_Classifier:
 
 
     def predict(self, test_set):
-        test_set = pd.DataFrame(test_set)
         for f in test_set.to_numpy(): # numpy array of all instances
             _tweetID, tweet, _label = f # each instance has columns: tweetID, tweet, label
             headers = toDataFrame(freq(tweet)).to_numpy() # get the vocabulary for each individual tweets

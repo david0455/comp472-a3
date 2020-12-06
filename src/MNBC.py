@@ -1,14 +1,3 @@
-# Multinomial Naive Bayes Classifier
-# https://towardsdatascience.com/multinomial-naive-bayes-classifier-for-text-analysis-python-8dd6825ece67
-# https://www.mygreatlearning.com/blog/multinomial-naive-bayes-explained/
-# https://stackoverflow.com/questions/18702806/naive-bayes-classifier-explain-model-fitting-and-prediction-algorithms
-
-# https://medium.com/@johnm.kovachi/implementing-a-multinomial-naive-bayes-classifier-from-scratch-with-python-e70de6a3b92e
-# https://github.com/jmkovachi/sent-classifier
-
-
-# operator library
-# https://stackoverflow.com/questions/268272/getting-key-with-maximum-value-in-dictionary
 
 
  ############### NOTE 1 #################################
@@ -110,14 +99,14 @@ class NB_Classifier:
             for f in self.vocabulary:
                 word_f, _count = f
                 temp_word = (num_word_c[num_word_c['index'] == word_f])
-                if not temp_word.empty:
-                    _word_c, count_c = temp_word.iloc[0]
+                if not temp_word.empty: # if the word exists in this class
+                    _word_c, count_c = temp_word.iloc[0]  # get frequency of the word in this class 
                 else:
                     count_c = 0
                 if h == "yes":
-                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h0[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood  <-- [word, probability]
                 elif h == "no":
-                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
+                    self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood  <-- [word, probability]
 
 
     def predict(self, test_set):

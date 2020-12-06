@@ -85,6 +85,7 @@ class NB_Classifier:
                     self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood[0,0] = [class, word, probability]
 
 
+    # TODO: Need to change method names for NB_BOW_FV
     def fit_FV(self, train_set):
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
         all_tweets = train_set.iloc[:, 1]

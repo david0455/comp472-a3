@@ -35,10 +35,16 @@ class NB_Classifier:
             "yes": 0,
             "no": 0
         }
-        self.final_result = []
         self.likelihood_h0 = {}  # Dictionary of conditional probabilities for h1; see Note 1
         self.likelihood_h1 = {}  # Dictionary of conditional probabilities for h0
         self.vocabulary = None
+
+        self.final_result = []
+        self.model = None        # Original Vocabulary model or Filtered Vocabulary model
+        self.accuracy = 0
+        self.precision = []
+        self.recall = []
+        self.f1 = []
     
 
     # Accuracy: Count the number of correct results
@@ -108,8 +114,22 @@ class NB_Classifier:
     def getF1(self, test_set, precision, recall):
         return (2 * precision[0] * recall[0] / (precision[0] + recall[0])), (2 * precision[1] * recall[1] / (precision[1] + recall[1]))
 
+    
+    def print_evaluation(self):
+        if(self.model == "OV"):
+            filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt" 
+        else:
+            filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt"
+
+        file = open(filename, 'a')
+        file.write(str(self.accuracy) + "\n" + str(self.precision[0]) + "  " + str(self.precision[1]) + 
+                    "\n" + str(self.recall[0]) + "  " + str(self.recall[1]) + 
+                    "\n" + str(self.f1[0]) + "  " + str(self.f1[1]) )
+        file.close()
+
 
     def fit_OV(self, train_set):
+        self.model = "OV"
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
 
         # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
@@ -143,6 +163,7 @@ class NB_Classifier:
 
     # TODO: Need to change method names for NB_BOW_FV
     def fit_FV(self, train_set):
+        self.model = "FV"
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
 
         # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
@@ -199,9 +220,11 @@ class NB_Classifier:
         test_set['score'] = np.array(final_score).round(2)
         # test_set['score'] = test_set['score'].round(decimals=2)
 
-        accuracy = self.getAccuracy(test_set)
-        precision =  self.getPrecision(test_set)        # precision(yes, no)  ->  precision[0] = yes,  precision[1] = no
-        recall =  self.getRecall(test_set)              # recall(yes, no)     ->  recall[0]    = yes,  recall[1]    = no
-        f1 = self.getF1(test_set, precision, recall)    # f1(yes, no)         ->  f1[0]        = yes,  f1[1]        = no
+        self.accuracy = self.getAccuracy(test_set)
+        self.precision =  self.getPrecision(test_set)        # precision(yes, no)  ->  precision[0] = yes,  precision[1] = no
+        self.recall =  self.getRecall(test_set)              # recall(yes, no)     ->  recall[0]    = yes,  recall[1]    = no
+        self.f1 = self.getF1(test_set, self.precision, self.recall)    # f1(yes, no)         ->  f1[0]        = yes,  f1[1]        = no
 
+        self.print_evaluation()
+        print(f'accuracy: {self.accuracy}, precision: {self.precision}, recall: {self.recall}, f1: {self.f1}')
         print(test_set)

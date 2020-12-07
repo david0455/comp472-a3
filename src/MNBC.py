@@ -116,10 +116,7 @@ class NB_Classifier:
 
     
     def print_evaluation(self):
-        if(self.model == "OV"):
-            filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt" 
-        else:
-            filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt"
+        filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt"
 
         file = open(filename, 'a')
         file.write(str(self.accuracy) + "\n" + str(self.precision[0]) + "  " + str(self.precision[1]) + 
@@ -127,6 +124,21 @@ class NB_Classifier:
                     "\n" + str(self.f1[0]) + "  " + str(self.f1[1]) )
         file.close()
 
+
+    def print_trace(self, test_set):
+        filename = ".//output//trace_NB-BOW-" + str(self.model) + ".txt" 
+        file = open(filename, 'a')
+        
+        for instance in test_set.to_numpy():
+            tweet_id, _tweet, correct_class, predicted_class, score = instance
+            label = ""
+            if correct_class == predicted_class:
+                label = "correct"
+            else:
+                label = "wrong"
+            file.write(str(tweet_id) + "  " + str(predicted_class) + "  " + str(score) + 
+                        "  " + str(correct_class) + "  " + str(label) + "\n")
+        file.close()
 
     def fit_OV(self, train_set):
         self.model = "OV"
@@ -226,5 +238,6 @@ class NB_Classifier:
         self.f1 = self.getF1(test_set, self.precision, self.recall)    # f1(yes, no)         ->  f1[0]        = yes,  f1[1]        = no
 
         self.print_evaluation()
-        print(f'accuracy: {self.accuracy}, precision: {self.precision}, recall: {self.recall}, f1: {self.f1}')
-        print(test_set)
+        self.print_trace(test_set)
+        # print(f'accuracy: {self.accuracy}, precision: {self.precision}, recall: {self.recall}, f1: {self.f1}')
+        # print(test_set)

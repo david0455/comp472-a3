@@ -41,24 +41,72 @@ class NB_Classifier:
         self.vocabulary = None
     
 
-    #TODO: Accuracy
+    # Accuracy: Count the number of correct results
+    #           Over the total number of instances
     def getAccuracy(self, test_set):
-        print("hello")
+        correct = 0
+        total_row = test_set.shape[0]
+        expected = test_set[2]                      # Get the list of expected results
+        predicted = test_set['predicted_class']     # Get the list of predicted results
+
+        for i in range(0, total_row, 1):
+            if expected[i] == predicted[i]:
+                correct += 1
+
+        return correct / total_row
 
 
-    #TODO: Precision
+    # Precision: Count the number of correct results of each class
+    #            Over the total number of each class in predicted
     def getPrecision(self, test_set):
-        print("hello")
+        correct_yes = 0
+        correct_no = 0
+        total_yes = 0
+        total_no = 0
+        total_row = test_set.shape[0]
+        expected = test_set[2]                      # Get the list of expected results
+        predicted = test_set['predicted_class']     # Get the list of predicted results
+
+        for i in range(0, total_row, 1):
+            if predicted[i] == 'yes':
+                total_yes += 1
+                if expected[i] == predicted[i]:
+                    correct_yes += 1
+            elif predicted[i] == 'no':
+                total_no += 1
+                if expected[i] == predicted[i]:
+                    correct_no += 1
+        
+        return correct_yes / total_yes, correct_no / total_no
     
 
-    #TODO: Recall
+    # Recall: Count the number of correct results of each class
+    #         Over the total number of each class in expected
     def getRecall(self, test_set):
-        print("hello")
+        correct_yes = 0
+        correct_no = 0
+        total_yes = 0
+        total_no = 0
+        total_row = test_set.shape[0]
+        expected = test_set[2]                      # Get the list of expected results
+        predicted = test_set['predicted_class']     # Get the list of predicted results
+
+        for i in range(0, total_row, 1):
+            if expected[i] == 'yes':
+                total_yes += 1
+                if expected[i] == predicted[i]:
+                    correct_yes += 1
+            elif expected[i] == 'no':
+                total_no += 1
+                if expected[i] == predicted[i]:
+                    correct_no += 1
+        
+        return correct_yes / total_yes, correct_no / total_no
     
 
-    #TODO: F1-measure
-    def getF1(self, test_set):
-        print("hello")
+    # F1-measure = 2 * Precision * Recall / (Precision + Recall)
+    def getF1(self, test_set, precision, recall):
+        return (2 * precision[0] * recall[0] / (precision[0] + recall[0])), (2 * precision[1] * recall[1] / (precision[1] + recall[1]))
 
 
     def fit_OV(self, train_set):
@@ -151,10 +199,9 @@ class NB_Classifier:
         test_set['score'] = np.array(final_score).round(2)
         # test_set['score'] = test_set['score'].round(decimals=2)
 
-        self.getAccuracy(test_set)
-        self.getPrecision(test_set)
-        self.getRecall(test_set)
-        self.getF1(test_set)
+        accuracy = self.getAccuracy(test_set)
+        precision =  self.getPrecision(test_set)        # precision(yes, no)  ->  precision[0] = yes,  precision[1] = no
+        recall =  self.getRecall(test_set)              # recall(yes, no)     ->  recall[0]    = yes,  recall[1]    = no
+        f1 = self.getF1(test_set, precision, recall)    # f1(yes, no)         ->  f1[0]        = yes,  f1[1]        = no
 
         print(test_set)
-

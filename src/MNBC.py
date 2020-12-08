@@ -20,7 +20,7 @@ import pandas as pd
 import operator as op
 import numpy as np
 from math import log10
-from NB_BOW_OV import toDataFrame, feqTotalTweets, freq
+from NB_BOW_OV import toDataFrame, feqTotalTweets, freq, filterVocab
 
 smoothing = 0.01 
 
@@ -173,19 +173,18 @@ class NB_Classifier:
                     self.likelihood_h1[word_f] = log10((count_c + smoothing)/(tot_num_word_c + smoothing*self.vocabulary.size)) # likelihood h1 <-- {word: probability}
 
 
-    # TODO: Need to change method names for NB_BOW_FV
     def fit_FV(self, train_set):
         self.model = "FV"
         tot_num_tweets = train_set.shape[0] # total number of instance/tweets
 
         # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
         all_tweets = train_set.iloc[:, 1]
-        self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy() # vocabulary <-- [word, frequency]
+        self.vocabulary = toDataFrame(filterVocab(feqTotalTweets(all_tweets))).to_numpy() # vocabulary <-- [word, frequency]
 
         for h in self.priors:
             num_tweet_c = (train_set['q1_label'] == h).sum()            # Number of tweets/instance in class c
             df_c = train_set[(train_set['q1_label'] == h)]              # All instances of class c
-            num_word_c = toDataFrame(feqTotalTweets(df_c.iloc[:, 1]))   # Get all tweets/instances of class c
+            num_word_c = toDataFrame(filterVocab(feqTotalTweets(df_c.iloc[:, 1])))   # Get all tweets/instances of class c
             tot_num_word_c = num_word_c[0].sum()                        # Total number of words in class c
             
             self.priors[h] = log10(num_tweet_c/tot_num_tweets)          # Calculate the prior P(H) 
@@ -230,14 +229,11 @@ class NB_Classifier:
         most_likely_class, final_score = zip(*self.final_result)
         test_set['predicted_class'] = most_likely_class
         test_set['score'] = np.array(final_score).round(2)
-        # test_set['score'] = test_set['score'].round(decimals=2)
 
         self.accuracy = self.getAccuracy(test_set)
-        self.precision =  self.getPrecision(test_set)        # precision(yes, no)  ->  precision[0] = yes,  precision[1] = no
-        self.recall =  self.getRecall(test_set)              # recall(yes, no)     ->  recall[0]    = yes,  recall[1]    = no
+        self.precision =  self.getPrecision(test_set)                  # precision(yes, no)  ->  precision[0] = yes,  precision[1] = no
+        self.recall =  self.getRecall(test_set)                        # recall(yes, no)     ->  recall[0]    = yes,  recall[1]    = no
         self.f1 = self.getF1(test_set, self.precision, self.recall)    # f1(yes, no)         ->  f1[0]        = yes,  f1[1]        = no
 
         self.print_evaluation()
         self.print_trace(test_set)
-        # print(f'accuracy: {self.accuracy}, precision: {self.precision}, recall: {self.recall}, f1: {self.f1}')
-        # print(test_set)

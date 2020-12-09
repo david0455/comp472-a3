@@ -33,11 +33,23 @@ Team name: ChickenNuggets
 
 **Prerequisites:**
 
-*Python 3.8.x must be installed to run the code*
+*Python 3.x.x must be installed to run the code*
 
 *For more information on how to install Python go to https://www.python.org/downloads/*
 
 *LSTM Classifier: https://gitlab.com/Feasinde/lstm-for-covid-disinformation*
+
+Make sure you have the following packages installed:
+
+- pandas
+
+- operator
+
+- numpy
+
+- math
+
+- collections
 
 **Running the code:**
 

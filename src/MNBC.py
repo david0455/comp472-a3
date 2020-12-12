@@ -16,7 +16,6 @@
 # | tweetID |  tweet  | class | 
 # | 0000001 |  hello |  yes  |
 
-import pandas as pd
 import operator as op
 import numpy as np
 from math import log10

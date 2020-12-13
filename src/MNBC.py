@@ -115,7 +115,7 @@ class NB_Classifier:
                     (2 * precision[1] * recall[1] / (precision[1] + recall[1]))
 
     def print_evaluation(self):
-        filename = "../output//eval_NB-BOW-" + str(self.model) + ".txt"
+        filename = ".//output//eval_NB-BOW-" + str(self.model) + ".txt"
 
         file = open(filename, 'a')
         file.write(str(self.accuracy) + "\n" + str(self.precision[0]) + "  " + str(self.precision[1]) +
@@ -124,7 +124,7 @@ class NB_Classifier:
         file.close()
 
     def print_trace(self, test_set):
-        filename = "../output//trace_NB-BOW-" + str(self.model) + ".txt"
+        filename = ".//output//trace_NB-BOW-" + str(self.model) + ".txt"
         file = open(filename, 'a')
 
         for instance in test_set.to_numpy():

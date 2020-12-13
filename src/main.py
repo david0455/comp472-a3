@@ -6,8 +6,8 @@ def main():
     nb_ov = NB_Classifier()
     nb_fv = NB_Classifier()
 
-    train_set = getData('../data/covid_training.tsv', False)
-    test_set = getData('../data/covid_test_public.tsv', True)
+    train_set = getData('.//data/covid_training.tsv', False)
+    test_set = getData('.//data/covid_test_public.tsv', True)
 
     nb_ov.fit_OV(train_set)
     nb_ov.predict(test_set)

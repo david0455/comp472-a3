@@ -145,6 +145,8 @@ class NB_Classifier:
         # take only the "Tweet" column and calculate the frequency of ALL words among all tweets
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(feqTotalTweets(all_tweets)).to_numpy()  # vocabulary <-- [word, frequency]
+        num_rows, num_cols = self.vocabulary.shape
+        print(num_rows)  # print size of vocabulary for OV
 
         for h in self.priors:
             num_tweet_c = (train_set['q1_label'] == h).sum()  # Number of tweets/instance in class c
@@ -180,6 +182,9 @@ class NB_Classifier:
         all_tweets = train_set.iloc[:, 1]
         self.vocabulary = toDataFrame(
             filterVocab(feqTotalTweets(all_tweets))).to_numpy()  # vocabulary <-- [word, frequency]
+
+        num_rows, num_cols = self.vocabulary.shape
+        print(num_rows)  # print size of vocabulary for FV
 
         for h in self.priors:
             num_tweet_c = (train_set['q1_label'] == h).sum()  # Number of tweets/instance in class c

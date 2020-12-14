@@ -14,6 +14,8 @@ Team name: ChickenNuggets
 
 ## Task Division
 
+**Note:** We did pair-programming using VSCode Live Share for most of this assignment. Therefore, the contribution in github may not reflect the actual contribution for each person.
+
 **David Chen**: 
 
 - Multinomial Naive Bayes Classifier, Analysis

@@ -2,8 +2,6 @@
 
 https://github.com/david0455/comp472-a3
 
-(REMOVE THIS Google Slide Link WHEN PROJECT IS DONE) https://docs.google.com/presentation/d/12inHSL3EmV-UGskjKY7FAed-H73TYlccWQ9_rj284gA/edit?usp=sharing
-
 ## Team Members
 
 Team name: ChickenNuggets
@@ -22,11 +20,11 @@ Team name: ChickenNuggets
 
 **Jack Leung**:
 
-- NB_BOW_OV, Analysis
+- NB_BOW_OV & NB_BOW_FV, Analysis
 
 **Samiha Rahman**:
 
-- NB_BOW_FV, Analysis
+- NB_BOW_OV & NB_BOW_FV, Analysis
 
 
 ## How to run the code:

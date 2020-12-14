@@ -1,13 +1,6 @@
-# Model 1: NB-BOW-OV
-#  all words appearing in the training set are used as features
-
 import pandas as pd
 import numpy as np
 from collections import Counter
-
-
-def bow_ov():
-    print("hello")
 
 
 # Calculates the frequency of each word within a string

@@ -6,8 +6,7 @@
 
  # likelihood = {word, probability}
  # e.g. likelihood["apple"] <== {"apple": 0.45}
-    
-##########
+
 
 ############## NOTE 2 ###################################
 
